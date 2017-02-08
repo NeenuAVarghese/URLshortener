@@ -1,4 +1,7 @@
 
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %> 
+
+  
 <%
 	String longUrl = (String) session.getAttribute("longUrl");
 	session.removeAttribute("longUrl");
@@ -23,10 +26,10 @@
 <title>URL Shortner</title>
 
 <!-- Bootstrap -->
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Application Specific CSS -->
-<link href="stylesheets/urlShortner.css" rel="stylesheet"
+<link href="resources/stylesheets/urlShortner.css" rel="stylesheet"
 	type="text/css">
 </head>
 <body>
@@ -57,7 +60,7 @@
 						</button></li>
 					<li><button data-target=".signup-modal" id="uSh_Signup"
 							data-toggle="modal" type="button" class="btn btn-md btn-warning">
-							<span class="glyphicon glyphicon-hand-up"> SignUp</span>
+							<span class="glyphicon glyphicon-hand-up" action=""> SignUp</span>
 						</button></li>
 				</ul>
 			</div>
@@ -79,21 +82,21 @@
 					<h4 class="modal-title" id="myModalLabel">Login</h4>
 				</div>
 				<div class="modal-body">
-					<form method="POST"
-						action="<c:url value="/login"><c:param name="action" value="login" /></c:url>">
+
+				<form:form method="post" modelAttribute="loginForm" action="login">
 						<div class="form-group">
-							<label class="control-label" for="uSh_loginCard-loginId">Username:</label>
-							<input name="username" class="form-control"
-								id="uSh_loginCard-loginId" type="text">
+							<form:label path="username" class="control-label" for="uSh_LoginCard-loginId">Username</form:label>
+							<form:input path="username" class="form-control" id="uSh_LoginCard-loginId" type="text" />
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="uSh_loginCard-loginPassword">Password:</label>
-							<input name="password" class="form-control"
-								id="uSh_loginCard-loginPassword" type="password">
+							<form:label path="password" class="control-label" for="uSh_LoginCard-password" >Password</form:label>
+							<form:password path="password" class="form-control"
+								id="uSh_LoginCard-password"/>
 						</div>
-						<button type="submit" class="btn btn-primary uSh_loginAction"
-							type="button">Sign In</button>
-					</form>
+						<button type="submit" class="btn btn-primary uSh_LoginAction"
+							type="button">Login !</button>
+					</form:form>
+
 				</div>
 				<div class="modal-footer">
 					<div>
@@ -118,21 +121,20 @@
 					<h4 class="modal-title" id="myModalLabel">I want to join</h4>
 				</div>
 				<div class="modal-body">
-					<form method="POST"
-						action="<c:url value="/login"><c:param name="action" value="signup" /></c:url>">
+				
+					<form:form method="post" modelAttribute="signUpForm" action="signUp">
 						<div class="form-group">
-							<label class="control-label" for="uSh_signupCard-loginId">Username:</label>
-							<input name="new_username" class="form-control"
-								id="uSh_signupCard-loginId" type="text">
+							<form:label path="new_username" class="control-label" for="uSh_signupCard-loginId">Username</form:label>
+							<form:input path="new_username" class="form-control" id="uSh_signupCard-loginId" type="text" />
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="uSh_signupCard-password">Password:</label>
-							<input name="new_password" class="form-control"
-								id="uSh_signupCard-password" type="password">
+							<form:label path="new_password" class="control-label" for="uSh_signupCard-password" >Password</form:label>
+							<form:password path="new_password" class="form-control"
+								id="uSh_signupCard-password"/>
 						</div>
 						<button type="submit" class="btn btn-primary uSh_signupAction"
 							type="button">Sign Me Up !</button>
-					</form>
+					</form:form>
 				</div>
 				<div class="modal-footer">
 					<div>
@@ -194,17 +196,17 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-6">
-					<form method="POST"
-						action="<c:url value="/home"><c:param name="action" value="getLongUrl" /></c:url>">
+					<form:form method="get" action="getLongUrl" modelAttribute="shortToLong">
 						<div class="input-group">
-							<input type="text" class="form-control" id="uSh_getShortUrl"
-								placeholder="Your Short Url Here" name="shortUrl">
+							<form:input path="shortUrl" type="text" class="form-control" id="uSh_getShortUrl"
+								placeholder="Your Short Url Here"></form:input>
+								
 							<div class="input-group-btn">
 								<button type="submit" id="us_convertShortToLong" type="button"
 									class="btn btn-md btn-warning">Get Long URL</button>
 							</div>
 						</div>
-					</form>
+					</form:form>
 					<p id="uSh_longUrlVal" hidden><%=longUrl%></p>
 				</div>
 				<div class="col-xs-3"></div>
@@ -248,8 +250,8 @@
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="bootstrap/js/bootstrap.min.js"></script>
-	<script src="js/index.js"></script>
+	<script src="resources/bootstrap/js/bootstrap.min.js"></script>
+	<script src="resources/js/index.js"></script>
 </body>
 </html>
 

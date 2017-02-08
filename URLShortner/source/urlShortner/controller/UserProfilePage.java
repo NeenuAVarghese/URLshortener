@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,140 +19,38 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
-
-import model.dto.UserUrl;
+import formObjects.LongToShortForm;
 import model.dao.*;
 import model.dto.*;
-@WebServlet(
-		name = "UserProfileServlet",
-		urlPatterns = "/userprofile"
-		)
 
-/**************Check logout belongs to get or post**************/
 @Controller
-public class UserProfilePage extends HttpServlet{
-
-	//DBRequesthandler reqHandler = new DBRequesthandler();
-	@Autowired
-	private GlobalURLDao globalurlDao;
-	@Autowired
-	private UserURLDao userurlDao;
+public class UserProfilePage{
 	
-	@Override
-	public void init(ServletConfig config) throws ServletException{
-		super.init(config);
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	@Inject private GlobalURLDao globalurlDao;
 
-	}
-	
-	public void setGlobalurlDao(GlobalURLDao globalurlDao){
-		this.globalurlDao = globalurlDao;
-	}
-	public void setUserurlDao(UserURLDao userurlDao){
-		this.userurlDao = userurlDao;
-	}
+	@Inject private UserURLDao userurlDao;
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping("/logout")
+	public View logout(HttpServletRequest request)
 			throws ServletException, IOException
 	{
-		HttpSession session = request.getSession();
-		//this need to be optimized
-
-		/*The below code checks if user is logged in or not.
-		 * If logged in, user is redirected to /userprofile Servlet
-		 */
-		if(request.getSession().getAttribute("username") == null || request.getSession() == null)
-		{
-			session.invalidate();
-			response.sendRedirect("home");
-			return;
-		}
-
-		if(request.getParameter("logout") != null)
-		{
-			session.invalidate();
-			response.sendRedirect("home");
-			return;
-		}
-
-
-		String action = request.getParameter("action");
-
-		if(action == null)
-			action = "page";
-
-		switch(action)
-		{
-		case "logout":
-			this.logout(request, response);
-			break;
-		case "page":
-		default:
-			this.loadPage(request, response);
-			break;
-		}
-	}
-
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException
-	{
-		HttpSession session = request.getSession();
-		/*The below code checks if user is logged in or not.
-		 * If logged in, user is redirected to /userprofile Servlet
-		 */
-		if(request.getSession().getAttribute("username") == null || request.getSession() == null)
-		{
-			session.invalidate();
-			response.sendRedirect("home");
-			return;
-		}
-
-		if(request.getParameter("logout") != null)
-		{
-			session.invalidate();
-			response.sendRedirect("home");
-			return;
-		}
-
-		String action = request.getParameter("action");
-
-		if(action == null)
-			action = "page";
-
-		switch(action)
-		{
-		case "logout":
-			this.logout(request, response);
-			break;
-		case "deleteUrl":
-			this.deleteUrlFromUserList(request, response);
-			break;
-		case "shortenURL":
-			this.shortenURL(request, response);
-			break;
-		case "page":
-		default:
-			this.loadPage(request, response);
-			break;
-		}
-	}
-
-
-	private void logout(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException
-	{
+		System.out.println("logout");
 		HttpSession session = request.getSession();
 		session.invalidate();
-		response.sendRedirect("home");
-		return;
+		return new RedirectView("/home", true);
 	}
 
 
-	private void shortenURL(HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping("/shortenURL")
+	private View shortenURL(@RequestParam("longUrl") String longUrl , HttpServletRequest request)
 			throws ServletException, IOException
 	{	
 		//Todo - Need to handle per user longurl
@@ -170,31 +69,29 @@ public class UserProfilePage extends HttpServlet{
 		 *  	Add URL to Global urlMapping
 		 */
 		HttpSession session = request.getSession();
-		String longUrl = request.getParameter("longUrl");
 		String username = (String) session.getAttribute("username");
-
 		UrlMappingList urlList = globalurlDao.getshortURL(longUrl);
 		if(urlList == null){
 			String shortUrl = globalurlDao.addNewValueToGlobalURLList(longUrl);
 			if(shortUrl != null){
 				userurlDao.addUrlToUserList(username, shortUrl, longUrl);
-				response.sendRedirect("userprofile");
 			}
 			else{
 				System.out.println("Something went wrong in processing the long URL");
 			}
-			
 		}
 		else{
 			userurlDao.addUrlToUserList(username, urlList.getShortUrl(), longUrl);
 		}
-		response.sendRedirect("userprofile");
+		return new RedirectView("/userprofile", true);
 	}
-
-
-	private void loadPage(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException
+	
+	
+	@RequestMapping("/userprofile")
+	private String loadPage(Map<String, Object> model, HttpServletRequest request)
 	{
+		
+		model.put("longToShortForm", new LongToShortForm());
 		/*
 		 * 1. Check if UserUrlList exists for current user
 		 * 	YES:
@@ -211,23 +108,21 @@ public class UserProfilePage extends HttpServlet{
 		request.setAttribute("username", username);
 		List<UserUrl> userurl = userurlDao.getUserUrlList(username);
 		if(userurl != null){
-//			System.out.println("Pasing values");
 			request.setAttribute("links", userurl);
 		}
 		else{
 			request.setAttribute("links", null);
 		}
-		
 		//return hashmap having shorturl,visitcount. and set to linksCount.
 		 HashMap<String,Integer> globalUrlCount = globalurlDao.getAllVisitCountMap(userurl);		 
 		 request.setAttribute("linksCount", globalUrlCount);
 		 
-		request.getRequestDispatcher("/WEB-INF/jsp/view/userprofile.jsp").forward(request, response);
-
+		return "userprofile";
 	}
 
 
-	private void deleteUrlFromUserList (HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value="/delete", method=RequestMethod.POST)
+	private View deleteUrlFromUserList (@RequestParam("urlToRemove") String urlToRemove, HttpServletRequest request)
 			throws ServletException, IOException{
 		/*
 
@@ -238,9 +133,8 @@ public class UserProfilePage extends HttpServlet{
 		System.out.println("In delete");
 		HttpSession session = request.getSession();
 		String username = (String) session.getAttribute("username");
-		String urlToRemove = request.getParameter("urlToRemove");
 		userurlDao.deleteUserListValue(username, urlToRemove);
-		response.sendRedirect("userprofile");
+		return new RedirectView("/userprofile", true);
 	}
 
 }

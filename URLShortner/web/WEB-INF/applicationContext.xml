@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-            http://www.springframework.org/schema/mvc
-            http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
+	<context:annotation-config />
+	 <context:component-scan base-package="controller" />
+    <context:component-scan base-package="formObjects"/>
+   	<context:component-scan base-package="model"/>
 
-	<mvc:annotation-driven />
-
+	
    <!-- Initialization for data source -->
    <bean id="basicDataSource" 
       class="org.apache.commons.dbcp2.BasicDataSource">
@@ -18,38 +21,7 @@
       <property name="username" value="SA"/>
       <property name="password" value="Passw0rd"/>
    </bean>
-   
- 	
-   <bean name="authImpl" class="model.dao.AuthDaoImpl">
-   <property name="dataSource"  ref="basicDataSource" />   
-   </bean>
-   
-    <bean name="globalURLDaoImpl" class="model.dao.GlobalURLDaoImpl">
-   <property name="dataSource"  ref="basicDataSource" />   
-   </bean>
-   
-   <bean name="userURLDaoImpl" class="model.dao.UserURLDaoImpl">
-   <property name="dataSource"  ref="basicDataSource" />   
-   </bean>
-   
-   
-   <bean name="loginServletBean" class="controller.LoginServlet">
-   	<property name="authentication" ref="authImpl"/>
-   </bean>
-   
-     <bean name="UrlRequesthandlerServletBean" class="controller.UrlRequesthandler">
-   </bean>
-   
-   <bean name="UserProfilePageServletBean" class="controller.UserProfilePage">
-   <property name="globalurlDao" ref="globalURLDaoImpl"></property>
-   <property name="userurlDao" ref="userURLDaoImpl"></property>
-   </bean>
-   
-   <bean name="HomePageServletBean" class="controller.HomePageServlet">
-   </bean>
-   
-   <bean name="ErrorHandlingServletBean" class="controller.ErrorHandling">
-   </bean>
+
     
 </beans>
 

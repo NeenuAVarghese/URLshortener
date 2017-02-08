@@ -2,6 +2,7 @@
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="model.dto.UserUrl"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %> 
 
 <%
 	@SuppressWarnings("unchecked")
@@ -23,9 +24,9 @@
 <title>URL Shortner</title>
 
 <!-- Bootstrap -->
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <!-- Application Specific CSS -->
-<link href="stylesheets/urlShortner.css" rel="stylesheet"
+<link href="resources/stylesheets/urlShortner.css" rel="stylesheet"
 	type="text/css">
 
 </head>
@@ -51,7 +52,7 @@
 
 				<ul class="nav navbar-nav navbar-right">
 					<li id="uSh_logout"><button method="POST"
-							onclick="location.href='<c:url value="/userprofile"><c:param name="action" value="logout" /></c:url>'"
+							onclick="location.href='<c:url value="/logout"></c:url>'"
 							type="button" class="btn btn-md btn-info" id="uSh_login">
 							<span class="glyphicon glyphicon-log-out"> Logout</span>
 						</button></li>
@@ -92,17 +93,17 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-6">
-					<form>
+					<form:form method="post" modelAttribute="longToShortForm">
 						<div class="input-group">
-							<input type="text" class="form-control"
+							<form:input path="longUrl" type="text" class="form-control"
 								placeholder="Your Long Url Here" aria-describedby="basic-addon2"
-								name="longUrl" id="uSh_getLongUrl">
+								id="uSh_getLongUrl"></form:input>
 							<div class="input-group-btn">
 								<button type="submit" id="us_convertlongToShort" type="button"
 									class="btn btn-md btn-warning">Get Short URL</button>
 							</div>
 						</div>
-					</form>
+					</form:form>			
 				</div>
 				<div class="col-xs-3"></div>
 			</div>
@@ -208,7 +209,7 @@
 
 
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="bootstrap/js/bootstrap.min.js"></script>
-	<script src="js/index.js"></script>
+	<script src="resources/bootstrap/js/bootstrap.min.js"></script>
+	<script src="resources/js/index.js"></script>
 </body>
 </html>

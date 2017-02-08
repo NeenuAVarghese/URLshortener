@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,8 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
+
 import model.dao.GlobalURLDao;
 import model.dao.UserURLDao;
 import model.dto.UrlMappingList;
@@ -22,31 +29,16 @@ import model.dto.UrlMappingList;
 /*
  * This servlet handles requests and responses for all responses for the domainname/short/* URL
  */
-@WebServlet(
-		name = "shortURLHandler",
-		urlPatterns = "/short/*"
-		)
+
+
 @Controller
-public class UrlRequesthandler extends HttpServlet{
+public class UrlRequesthandler{
 
-
-	@Autowired
-	private GlobalURLDao globalurlDao;
+	@Inject private GlobalURLDao globalurlDao;
 	
-	@Override
-	public void init(ServletConfig config) throws ServletException{
-		super.init(config);
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-
-	}
-	
-	public void setGlobalurlDao(GlobalURLDao globalurlDao){
-		this.globalurlDao = globalurlDao;
-	}
-	
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException , IOException
+	@RequestMapping("/short/*")
+	protected View urlRedirect(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException
 	{
 		/*
 		 * 1. Get URL from request parameters
@@ -83,14 +75,16 @@ public class UrlRequesthandler extends HttpServlet{
 			}
 
 			if (responseCode == 200) {
-				response.sendRedirect(longURL);
+				//response.sendRedirect(longURL);
+				return new RedirectView(longURL, true);
 			}
 			else{
-				response.sendRedirect("/URLShortner/errorPage");
+				return new RedirectView("/errorPage", true);
+				
 			}
-		
 		}else{
-			response.sendRedirect("/URLShortner/errorPage");
+		
+			return new RedirectView("/errorPage", true);
 		}
 	}
 }

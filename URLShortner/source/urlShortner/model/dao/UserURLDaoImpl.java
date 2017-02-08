@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,10 +23,11 @@ public class UserURLDaoImpl implements UserURLDao{
 	/*
 	 * This class contains the implementation for UserUrlDao Interface
 	 */
-	private BasicDataSource dataSource;
+	@Inject private BasicDataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
 
 
+	@Autowired
 	public void setDataSource(BasicDataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);

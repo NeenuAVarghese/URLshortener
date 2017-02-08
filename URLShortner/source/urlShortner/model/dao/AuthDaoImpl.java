@@ -1,20 +1,26 @@
 package model.dao;
 import model.mapper.*;
 import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SystemPropertyUtils;
 
 import model.dto.*;
 
 @Service
 public class AuthDaoImpl implements AuthDao{
 
-	private BasicDataSource dataSource;
+	@Inject private BasicDataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
 
+	@Autowired
 	public void setDataSource(BasicDataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
@@ -56,7 +62,7 @@ public class AuthDaoImpl implements AuthDao{
 			return false;
 		}
 		catch(Exception e){
-			System.out.println("Exception occured while user tried to signup");
+			System.out.println("Exception occured while user tried to signup" + e);
 			/*Put Stack trace into logger file*/
 			return false;
 		}

@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,10 +24,10 @@ import model.mapper.LongUrlMapper;
 
 @Service
 public class GlobalURLDaoImpl implements GlobalURLDao{
-	private BasicDataSource dataSource;
+	@Inject private BasicDataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
 
-
+	@Autowired
 	public void setDataSource(BasicDataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
@@ -74,7 +77,6 @@ public class GlobalURLDaoImpl implements GlobalURLDao{
 			return null;
 		}
 	
-		
 	}
 	
 	@Override

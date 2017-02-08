@@ -8,17 +8,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 /*
  * Unhandled requests will be redirected to this servlet
  */
-@WebServlet(
-		name = "errorHandlingServlet",
-		urlPatterns = "/errorPage"
-		)
 
+@Controller
 public class ErrorHandling extends HttpServlet{
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+	
+	@RequestMapping("/errorPage")
+	protected String errorPage(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 	{
 		/*
@@ -61,15 +63,6 @@ public class ErrorHandling extends HttpServlet{
 			String errMessage = "For the Servlet: "+servletName +", Following exception has occured: " +throwable.getClass().getName();
 			request.setAttribute("errorMessage", errMessage);
 		}
-
-		request.getRequestDispatcher("/WEB-INF/jsp/errorPages/error404.jsp").forward(request, response);
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException
-	{
-		this.doGet(request, response);
-
+		return "error404";
 	}
 }

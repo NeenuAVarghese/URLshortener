@@ -13,13 +13,13 @@ public class UserUrlMapper implements RowMapper<UserUrl>{
 			  userurl.setShortUrl(rs.getString("shortUrl"));
 	      }
 	      catch(Exception e){
-	    	  System.out.println("Did not get shortURL for User");
+	    	  
 	      }
 	      try{
 	    	  userurl.setLongUrl(rs.getString("longUrl"));
 	      }
 	      catch(Exception e){
-	    	  System.out.println("Did not get longURL for User");
+	    	  
 	      }
 
 	      return userurl;

@@ -12,13 +12,13 @@ public class UserMapper implements RowMapper<User>{
 	    	  user.setID(rs.getInt("userid"));
 	      }
 	      catch(Exception e){
-	    	  System.out.println("Did not get userid");
+	    	 
 	      }
 	      try{
 	    	  user.setPassword(rs.getString("password"));
 	      }
 	      catch(Exception e){
-	    	  System.out.println("Did not get password");
+	    	  
 	      }
 	    	  
 	      
